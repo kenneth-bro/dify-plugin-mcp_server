@@ -1,0 +1,36 @@
+settings:
+  - name: app
+    type: app-selector
+    scope: all
+    required: true
+    label:
+      en_US: App
+    placeholder:
+      en_US: Please select an app
+      zh_Hans: 请选择一个应用
+  - name: app-type
+    type: select
+    required: true
+    label:
+      en_US: App Type
+    options:
+      - label:
+          en_US: Chat
+        value: chat
+      - label:
+          en_US: Workflow
+        value: workflow
+      - label:
+          en_US: Completion
+        value: completion
+  - name: app-input-schema
+    type: text-input
+    required: true
+    label:
+      en_US: App Input Schema
+    placeholder:
+      en_US: the json format of your app input schema
+      zh_Hans: 请输入应用所需输入的 json 格式
+endpoints:
+  - endpoints/sse.yaml
+  - endpoints/messages.yaml

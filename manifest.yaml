@@ -1,0 +1,40 @@
+version: 0.0.1
+type: plugin
+author: hjlarry
+name: mcp-server
+label:
+  en_US: mcp-server
+  ja_JP: mcp-server
+  zh_Hans: mcp-server
+  pt_BR: mcp-server
+description:
+  en_US: make dify's workflow as a MCP server
+  ja_JP: make dify's workflow as a MCP server
+  zh_Hans: make dify's workflow as a MCP server
+  pt_BR: make dify's workflow as a MCP server
+icon: icon.svg
+resource:
+  memory: 268435456
+  permission:
+    endpoint:
+      enabled: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  endpoints:
+    - group/mcp-server.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+created_at: 2025-03-17T16:01:01.118569+08:00
+privacy: PRIVACY.md
+verified: false
