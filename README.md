@@ -1,9 +1,11 @@
 # MCP Server
 
 [![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/hjlarry/dify-plugin-mcp_server)
-[![Repo](https://img.shields.io/badge/repo-github-green.svg)](https://github.com/hjlarry/dify-plugin-mcp_server)
+[![Repo](https://img.shields.io/badge/repo&issue-github-green.svg)](https://github.com/hjlarry/dify-plugin-mcp_server)
 
 A Dify endpoint plugin that change a dify app to a mcp server.
+
+**To keep your data secure, use this plugin exclusively within your private network.**
 
 ## Get Started
 
@@ -13,7 +15,7 @@ A Dify endpoint plugin that change a dify app to a mcp server.
 ### 2. add a endpoint and select this app.
 ![2](./_assets/2.png)
 
-the app input schema should describe the input parameters of the app, the format like this:
+The app's input schema must define its input parameters. For a chat dify app, ensure to include a `query` field in the input schema, formatted as follows:
 ```json
 {
     "name": "get_weather",
@@ -29,8 +31,9 @@ the app input schema should describe the input parameters of the app, the format
 }
 ```
 
-### 3. copy the endpoint url to your mcp client, like `cursor`
+### 3. copy the endpoint url to your mcp client, like `Cherry Studio`
 ![3](./_assets/3.png)
 ![4](./_assets/4.png)
+
 ### 4. enjoy it!
 ![5](./_assets/5.png)

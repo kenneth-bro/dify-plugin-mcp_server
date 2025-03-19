@@ -20,9 +20,6 @@ settings:
       - label:
           en_US: Workflow
         value: workflow
-      - label:
-          en_US: Completion
-        value: completion
   - name: app-input-schema
     type: text-input
     required: true

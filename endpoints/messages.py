@@ -1,9 +1,6 @@
-import uuid
 import json
 from typing import Mapping
 from werkzeug import Request, Response
-from flask import stream_with_context
-from queue import Queue
 from dify_plugin import Endpoint
 
 
@@ -12,21 +9,14 @@ class MessageEndpoint(Endpoint):
         """
         Invokes the endpoint with the given request.
         """
-        app_map = {
-            "chat": self.session.app.chat,
-            "workflow": self.session.app.workflow,
-            "completion": self.session.app.completion,
-        }
         app_id = settings.get("app").get("app_id")
-        app_type = app_map.get(settings.get("app-type"))
         try:
             tool = json.loads(settings.get("app-input-schema"))
-        except JSONDecodeError:
+        except json.JSONDecodeError:
             raise ValueError("Invalid app-input-schema")
 
         session_id = r.args.get('session_id')
         data = r.json
-        response = None
 
         if data.get("method") == "initialize":
             response = {
@@ -49,11 +39,9 @@ class MessageEndpoint(Endpoint):
                     }
                 }
             }
-        
+
         elif data.get("method") == "notifications/initialized":
-            return Response("",
-                status=202,
-                content_type="application/json")
+            return Response("", status=202, content_type="application/json")
 
         elif data.get("method") == "tools/list":
             response = {
@@ -69,18 +57,36 @@ class MessageEndpoint(Endpoint):
         elif data.get("method") == "tools/call":
             tool_name = data.get("params", {}).get("name")
             arguments = data.get("params", {}).get("arguments", {})
-            
+
             try:
                 if tool_name == tool.get("name"):
-                    result = app_type.invoke(app_id=app_id, inputs=arguments, response_mode="blocking")
+                    if settings.get("app-type") == "chat":
+                        result = self.session.app.chat.invoke(
+                            app_id=app_id,
+                            query=arguments.get("query", "empty query"),
+                            inputs=arguments,
+                            response_mode="blocking"
+                        )
+                    else:
+                        result = self.session.app.workflow.invoke(
+                            app_id=app_id,
+                            inputs=arguments,
+                            response_mode="blocking"
+                        )
                 else:
                     raise ValueError(f"Unknown tool: {tool_name}")
+
+                if settings.get("app-type") == "chat":
+                    final_result = {"type": "text", "text": result.get("answer")}
+                else:
+                    r = [v for v in result.get("data").get("outputs", {}).values() if isinstance(v, str)]
+                    final_result = {"type": "text", "text": '\n'.join(r)}
 
                 response = {
                     "jsonrpc": "2.0",
                     "id": data.get("id"),
                     "result": {
-                        "content": [{"type": "text", "text": result}],
+                        "content": [final_result],
                         "isError": False
                     }
                 }
@@ -93,13 +99,15 @@ class MessageEndpoint(Endpoint):
                         "message": str(e)
                     }
                 }
+        else:
+            response = {
+                "jsonrpc": "2.0",
+                "id": data.get("id"),
+                "error": {
+                    "code": -32001,
+                    "message": "unsupported method"
+                }
+            }
 
-        if response:
-            self.session.storage.set(session_id, json.dumps(response).encode())
-            return Response("",
-                status=202,
-                content_type="application/json")
-        
-        return Response(json.dumps({"error": "Unknown method"}),
-                status=400,
-                content_type="application/json")
+        self.session.storage.set(session_id, json.dumps(response).encode())
+        return Response("", status=202, content_type="application/json")
