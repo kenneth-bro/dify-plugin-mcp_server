@@ -1,13 +1,20 @@
+import uuid
 import json
 from typing import Mapping
+
 from werkzeug import Request, Response
 from dify_plugin import Endpoint
 
 
-class MessageEndpoint(Endpoint):
+class HTTPPostEndpoint(Endpoint):
     def _invoke(self, r: Request, values: Mapping, settings: Mapping) -> Response:
         """
-        Invokes the endpoint with the given request.
+        the simplest Streamable HTTP mcp protocol implementation.
+
+        1. not valid session id
+        2. not support SSE
+        3. not support streaming
+        4. only basic logic
         """
         app_id = settings.get("app").get("app_id")
         try:
@@ -19,20 +26,25 @@ class MessageEndpoint(Endpoint):
         data = r.json
 
         if data.get("method") == "initialize":
+            session_id = str(uuid.uuid4()).replace("-", "")
             response = {
                 "jsonrpc": "2.0",
                 "id": data.get("id"),
                 "result": {
                     "protocolVersion": "2024-11-05",
                     "capabilities": {
-                        "experimental": {},
-                        "prompts": {"listChanged": False},
-                        "resources": {"subscribe": False, "listChanged": False},
-                        "tools": {"listChanged": False},
+                        "tools": {},
                     },
-                    "serverInfo": {"name": "Dify", "version": "1.3.0"},
+                    "serverInfo": {"name": "Dify", "version": "0.0.1"},
                 },
             }
+            headers = {"mcp-session-id": session_id}
+            return Response(
+                json.dumps(response),
+                status=200,
+                content_type="application/json",
+                headers=headers,
+            )
 
         elif data.get("method") == "notifications/initialized":
             return Response("", status=202, content_type="application/json")
@@ -92,5 +104,6 @@ class MessageEndpoint(Endpoint):
                 "error": {"code": -32001, "message": "unsupported method"},
             }
 
-        self.session.storage.set(session_id, json.dumps(response).encode())
-        return Response("", status=202, content_type="application/json")
+        return Response(
+            json.dumps(response), status=200, content_type="application/json"
+        )

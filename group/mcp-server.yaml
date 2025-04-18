@@ -31,3 +31,5 @@ settings:
 endpoints:
   - endpoints/sse.yaml
   - endpoints/messages.yaml
+  - endpoints/http_get.yaml
+  - endpoints/http_post.yaml
