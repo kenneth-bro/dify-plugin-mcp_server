@@ -1,7 +1,11 @@
 # MCP Server
 
-[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/hjlarry/dify-plugin-mcp_server)
-[![Repo](https://img.shields.io/badge/repo&issue-github-green.svg)](https://github.com/hjlarry/dify-plugin-mcp_server)
+**Author:** hjlarry  
+**Version:** 0.0.2  
+**Type:** extension   
+**Repo:** [https://github.com/hjlarry/dify-plugin-mcp_server](https://github.com/hjlarry/dify-plugin-mcp_server)  
+**Feature Request:** [issues](https://github.com/hjlarry/dify-plugin-mcp_server/issues)  
+
 
 A Dify endpoint plugin that change a dify app to a mcp server.
 
@@ -32,8 +36,21 @@ The app's input schema must define its input parameters. For a chat dify app, en
 ```
 
 ### 3. copy the endpoint url to your mcp client, like `Cherry Studio`
+
+#### Option 1: Use the newest Streamable HTTP protocol (Recommended)
+![6](./_assets/6.png)
+![7](./_assets/7.png)
+
+#### Option 2: Use the legacy SSE protocol
 ![3](./_assets/3.png)
 ![4](./_assets/4.png)
 
 ### 4. enjoy it!
 ![5](./_assets/5.png)
+
+
+## Changelog
+
+### 0.0.2
+- Add a new Streamable HTTP protocol.
+- Update dify-plugin-sdk version.
