@@ -23,15 +23,11 @@ class SSEEndpoint(Endpoint):
 
             while True:
                 message = None
-                try:
+                if self.session.storage.exist(session_id):
                     message = self.session.storage.get(session_id)
-                except:
-                    pass
-                if message is None:
-                    time.sleep(0.5)
-                    continue
-                message = message.decode()
-                self.session.storage.delete(session_id)
-                yield create_sse_message("message", message)
+                    message = message.decode()
+                    self.session.storage.delete(session_id)
+                    yield create_sse_message("message", message)
+                time.sleep(0.5)    
 
         return Response(generate(), status=200, content_type="text/event-stream")
