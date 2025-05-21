@@ -1,7 +1,7 @@
 version: 0.0.3
 type: plugin
 author: hjlarry
-name: mcp-server
+name: mcp-server_v2
 label:
   en_US: mcp-server
   ja_JP: mcp-server
