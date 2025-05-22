@@ -79,12 +79,16 @@ class HTTPPostEndpoint(Endpoint):
                 if settings.get("app-type") == "chat":
                     final_result = {"type": "text", "text": result.get("answer")}
                 else:
-                    r = [
-                        v
-                        for v in result.get("data").get("outputs", {}).values()
-                        if isinstance(v, str)
-                    ]
-                    final_result = {"type": "text", "text": "\n".join(r)}
+                    outputs = result.get("data", {}).get("outputs", {})
+                    text_list = []
+                    for v in outputs.values():
+                        if isinstance(v, str):
+                            text_list.append(v)
+                        elif isinstance(v, dict) or isinstance(v, list):
+                            text_list.append(json.dumps(v, ensure_ascii=False))
+                        else:
+                            text_list.append(str(v))
+                    final_result = {"type": "text", "text": "\n".join(text_list)}
 
                 response = {
                     "jsonrpc": "2.0",
