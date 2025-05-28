@@ -8,7 +8,6 @@ from dify_plugin import Endpoint
 
 class HTTPPostEndpoint(Endpoint):
     def _invoke(self, r: Request, values: Mapping, settings: Mapping) -> Response:
-        print("456")
         """
         the simplest Streamable HTTP mcp protocol implementation.
 
