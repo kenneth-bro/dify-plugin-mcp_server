@@ -1,10 +1,16 @@
 import uuid
 import time
 import json
+import logging
+
 from typing import Mapping
 from werkzeug import Request, Response
 from dify_plugin import Endpoint
+from dify_plugin.config.logger_format import plugin_logger_handler
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(plugin_logger_handler)
 
 def create_sse_message(event, data):
     return f"event: {event}\ndata: {json.dumps(data) if isinstance(data, (dict, list)) else data}\n\n"
@@ -15,6 +21,7 @@ class SSEEndpoint(Endpoint):
         """
         Invokes the endpoint with the given request.
         """
+        logger.info(f"SSEEndpoint request headers: {r.headers}")
         session_id = str(uuid.uuid4()).replace("-", "")
 
         def generate():

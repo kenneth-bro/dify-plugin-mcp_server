@@ -1,10 +1,15 @@
 import uuid
 import json
 from typing import Mapping
+import logging
 
 from werkzeug import Request, Response
 from dify_plugin import Endpoint
+from dify_plugin.config.logger_format import plugin_logger_handler
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(plugin_logger_handler)
 
 class HTTPPostEndpoint(Endpoint):
     def _invoke(self, r: Request, values: Mapping, settings: Mapping) -> Response:
@@ -16,10 +21,13 @@ class HTTPPostEndpoint(Endpoint):
         3. not support streaming
         4. only basic logic
         """
+        logger.info(f"HTTPPostEndpoint request headers: {r.headers}")
+        logger.info(f"HTTPPostEndpoint request json: {r.json}")
         app_id = settings.get("app").get("app_id")
         try:
             tool = json.loads(settings.get("app-input-schema"))
         except json.JSONDecodeError:
+            logger.error(f"Invalid app-input-schema: {settings.get("app-input-schema")}")
             raise ValueError("Invalid app-input-schema")
 
         session_id = r.args.get("session_id")
@@ -73,6 +81,7 @@ class HTTPPostEndpoint(Endpoint):
                         result = self.session.app.workflow.invoke(
                             app_id=app_id, inputs=arguments, response_mode="blocking"
                         )
+                    logger.info(f"Invoke dify app result: {json.dumps(result, ensure_ascii=False)}")
                 else:
                     raise ValueError(f"Unknown tool: {tool_name}")
 
@@ -96,6 +105,7 @@ class HTTPPostEndpoint(Endpoint):
                     "result": {"content": [final_result], "isError": False},
                 }
             except Exception as e:
+                logger.error(f"HTTPPostEndpoint tool call error: {e}")
                 response = {
                     "jsonrpc": "2.0",
                     "id": data.get("id"),

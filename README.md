@@ -53,6 +53,8 @@ The app's input schema must define its input parameters. For a chat dify app, en
 
 ### 0.0.3
 - To fix sse get non-exist key get lots error logs on the plugin daemon.
+- Add logs to help debug problems.
+- Streamable http support response object and array.
 
 ### 0.0.2
 - Add a new Streamable HTTP protocol.

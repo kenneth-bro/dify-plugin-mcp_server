@@ -7,7 +7,7 @@
 
     <!-- 字母 M -->
     <path d="M44,84 L44,44 L64,64 L84,44 L84,84" 
-          fill="white"
+          fill="none"
           stroke="#FF0099"
           stroke-width="9"
           stroke-linecap="round"
